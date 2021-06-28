@@ -21,9 +21,13 @@ class InputPage extends StatefulWidget {
 
 class _InputPageState extends State<InputPage> {
   Gender selectedGender;
-  int height = 180;
+  int height = 160;
+  int heightInInch = 60;
   int weight = 60;
-  int age = 25;
+  int weightInLB = 130;
+  int age = 20;
+  bool isSwitched = false;
+  bool isSwitchedLb = false;
 
   @override
   Widget build(BuildContext context) {
@@ -78,6 +82,32 @@ class _InputPageState extends State<InputPage> {
               cardChild: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
+                  Padding(
+                    padding: EdgeInsets.only(left: 15.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        Text(
+                          !isSwitched ? 'INCH' : 'CM',
+                          style: TextStyle(
+                            fontSize: 15.0,
+                          ),
+                        ),
+                        Switch(
+                          activeTrackColor: Colors.white,
+                          activeColor: Colors.pink,
+                          inactiveTrackColor: Colors.white,
+                          inactiveThumbColor: Colors.pink,
+                          value: isSwitched,
+                          onChanged: (value) {
+                            setState(() {
+                              isSwitched = value;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
                   Text(
                     'HEIGHT',
                     style: kLabelTextStyle,
@@ -88,11 +118,13 @@ class _InputPageState extends State<InputPage> {
                     textBaseline: TextBaseline.alphabetic,
                     children: <Widget>[
                       Text(
-                        height.toString(),
+                        !isSwitched
+                            ? height.toString()
+                            : heightInInch.toString(),
                         style: kNumberTextStyle,
                       ),
                       Text(
-                        ' CM',
+                        !isSwitched ? ' CM' : ' INCH',
                         style: kLabelTextStyle,
                       ),
                     ],
@@ -110,12 +142,16 @@ class _InputPageState extends State<InputPage> {
                           RoundSliderOverlayShape(overlayRadius: 30.0),
                     ),
                     child: Slider(
-                      value: height.toDouble(),
-                      min: 100.0,
-                      max: 220.0,
+                      value: !isSwitched
+                          ? height.toDouble()
+                          : heightInInch.toDouble(),
+                      min: !isSwitched ? 100.0 : 40.0,
+                      max: !isSwitched ? 220.0 : 80.0,
                       onChanged: (double newValue) {
                         setState(() {
-                          height = newValue.round();
+                          !isSwitched
+                              ? height = newValue.round()
+                              : heightInInch = newValue.round();
                         });
                       },
                     ),
@@ -133,12 +169,40 @@ class _InputPageState extends State<InputPage> {
                     cardChild: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.only(left: 15.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Text(
+                                !isSwitchedLb ? 'LB' : 'KG',
+                                style: TextStyle(
+                                  fontSize: 15.0,
+                                ),
+                              ),
+                              Switch(
+                                activeTrackColor: Colors.white,
+                                activeColor: Colors.pink,
+                                inactiveTrackColor: Colors.white,
+                                inactiveThumbColor: Colors.pink,
+                                value: isSwitchedLb,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isSwitchedLb = value;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
                         Text(
-                          'WEIGHT',
+                          isSwitchedLb ? 'WEIGHT/POUND' : 'WEIGHT/KG',
                           style: kLabelTextStyle,
                         ),
                         Text(
-                          weight.toString(),
+                          isSwitchedLb
+                              ? weightInLB.toString()
+                              : weight.toString(),
                           style: kNumberTextStyle,
                         ),
                         Row(
@@ -148,7 +212,7 @@ class _InputPageState extends State<InputPage> {
                               icon: FontAwesomeIcons.minus,
                               onPressed: () {
                                 setState(() {
-                                  weight--;
+                                  isSwitchedLb ? weightInLB-- : weight--;
                                 });
                               },
                             ),
@@ -159,7 +223,7 @@ class _InputPageState extends State<InputPage> {
                               icon: FontAwesomeIcons.plus,
                               onPressed: () {
                                 setState(() {
-                                  weight++;
+                                  isSwitchedLb ? weightInLB++ : weight++;
                                 });
                               },
                             ),
@@ -217,15 +281,20 @@ class _InputPageState extends State<InputPage> {
           BottomButton(
             buttonTitle: 'CALCULATE',
             onTap: () {
-              CalculatorBrain calc =
-                  CalculatorBrain(height: height, weight: weight);
+              CalculatorBrain calc = CalculatorBrain(
+                height: !isSwitched ? height.toDouble() : heightInInch * 2.54,
+                weight:
+                    isSwitchedLb ? weightInLB * 0.453592 : weight.toDouble(),
+              );
+              calc.setResult();
               Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (context) => ResultsPage(
-                    bmiResult: calc.calculateBMI(),
+                    bmiResult: calc.getBMI(),
                     interpretation: calc.getInterpretation(),
-                    resultText: calc.getResult(),
+                    resultText: calc.getResultText(),
+                    resultTextClr: calc.getColor(),
                   ),
                 ),
               );

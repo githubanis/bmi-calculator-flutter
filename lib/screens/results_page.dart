@@ -5,13 +5,16 @@ import 'file:///D:/Flutter/bmi-calculator-flutter/lib/components/bottom_button.d
 import 'file:///D:/Flutter/bmi-calculator-flutter/lib/components/reusable_card.dart';
 
 class ResultsPage extends StatelessWidget {
-  ResultsPage(
-      {@required this.bmiResult,
-      @required this.interpretation,
-      @required this.resultText});
+  ResultsPage({
+    @required this.bmiResult,
+    @required this.interpretation,
+    @required this.resultText,
+    @required this.resultTextClr,
+  });
   final String bmiResult;
   final String resultText;
   final String interpretation;
+  final Color resultTextClr;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +45,7 @@ class ResultsPage extends StatelessWidget {
                 children: <Widget>[
                   Text(
                     resultText.toUpperCase(),
-                    style: kResultTextStyle,
+                    style: fBMITextStyle(resultTextClr),
                   ),
                   Text(
                     bmiResult,
@@ -51,7 +54,7 @@ class ResultsPage extends StatelessWidget {
                   Text(
                     interpretation,
                     textAlign: TextAlign.center,
-                    style: kBodyTextStyle,
+                    style: fBodyTextStyle(resultTextClr),
                   )
                 ],
               ),

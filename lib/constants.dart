@@ -33,3 +33,18 @@ const kBMITextStyle = TextStyle(
 const kBodyTextStyle = TextStyle(
   fontSize: 22.0,
 );
+
+TextStyle fBMITextStyle(Color txtClr) {
+  return TextStyle(
+    fontSize: 45.0,
+    color: txtClr,
+    fontWeight: FontWeight.w900,
+  );
+}
+
+TextStyle fBodyTextStyle(Color txtClr) {
+  return TextStyle(
+    fontSize: 22.0,
+    color: txtClr,
+  );
+}
